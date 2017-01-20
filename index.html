@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+            
+        <title>Formation « Git »</title>
+
+
+        <meta name="author" content="Rémi Emonet">
+        <meta name="venue" content="Journée Formation Cirad">
+        <meta name="date" content="2017-01-20">
+        <meta name="affiliation" content="Université Jean Monnet de Saint Étienne,  Laboratoire Hubert Curien">
+
+        <style type="text/css">
+blockquote {padding: .3em !important;}
+blockquote p {font-size: 40%}
+blockquote cite {float: right; font-size: 40% !important;}
+pre, .slide li strong {background: #EFE; color: #000;} /* TODO: change for export/printing */
+
+
+.inred {color: red !important;}
+
+body div.deck-container .title-slide {
+    border: none;
+    background: url(media/logos/ujm-10.svg) bottom left no-repeat, url(media/logos/hcurien.svg) bottom right no-repeat;
+}
+body div.deck-container .title-slide.with-final {
+    border: none;
+    background: url(media/git/final.png) center/20% no-repeat, url(media/logos/ujm-10.svg) bottom left no-repeat, url(media/logos/hcurien.svg) bottom right no-repeat;
+}
+
+.deck-container .slide.ujm {
+    background: url(media/logos/ujm-10.svg) bottom 30px left 30px/30px no-repeat;
+}
+
+.slide.postits strong { background: pink; text-style: normal; font-weight: normal;}
+.slide.postits em     { background: yellow; text-style: normal; font-weight: normal;}
+
+
+.deck-container .slide h2 .demo::before {
+    float: right;
+}
+.deck-container .slide .demo::before {
+    content: "👁";
+    font-weight: bold;
+    display: inline-block;
+    font-size: 1.5em;
+    transform: scale(-1, -1);
+    font-style: normal;
+}
+
+
+.deck-container .slide h2 .action::before {
+    float: right;
+}
+.deck-container .slide .action::before {
+    content: "✎";
+    font-weight: bold;
+    display: inline-block;
+    font-size: 2em;
+    transform: scale(-1, -1);
+    font-style: normal;
+}
+/*.denser { font-size: 75% !important; }*/
+        </style>
+
+        <script src="deck-packed.js"></script>
+        <!--script src="extensions/slides.js"></script-->
+        <script>
+    includedeck([
+        "media/style.css",
+    ], {
+                AFTERINIT: function() {
+                    $(".hasSVG").each(function(i, e) {
+                        $(e).click(function() {
+                            $(e).toggleClass('FS');
+                        });
+                    });
+                },
+AFTERSMARTDOWN: function(){
+    $(".deck-container>.libyli li:not(li li):not(.notslide)").addClass("slide");
+    $("li.libyli>ul>li:not(.notslide)").addClass("slide");
+    $("#plan").detach();
+    $("#agenda").detach();
+    $("a[href]").attr('target', '_blank');
+}});
+        </script>
+    </head>
+
+<body>
+
+<div class="deck-container">
+
+    <div class="deck-loading-splash" style="background: black; color: chartreuse;"><span class="vcenter" style="font-size: 30px; font-family: Arial; ">Please wait, while our marmots are preparing the hot chocolate…</span></div>
+
+<section class="smart">
+
+# <span class="var-title-br"></span> {/no-status title-slide with-final} // commentaire
+-  
+-  
+- **{var-venue}**
+- <span class="var-author"></span> − <span class="var-date"></span>
+- <span class="var-affiliation"></span>
+
+<!-- ########## PLAN ########## -->
+## Version Control with Git: Overview {#plan overview}
+- Introduction to Version Control and Git {vcs}
+- Git basics {git}
+- Git history {githisto}
+- Git branches and conflicts {multigit}
+- Collaborating using Git and GitLab (or github) {gitlab}
+- Git Workflows {workflows}
+- Summing it up {concl}
+
+<!-- ########## AGENDA ########## -->
+## Planning {#agenda}
+```java
+09:00 − Accueil et mise en place.
+09:15 − Ligne de commande, Bash et notion de texte brut.
+10:00 − Introduction à git et création d’un premier dépôt.
+10:20 − Suivi de fichiers avec git.
+10:30 − Pause
+10:45 − Suivi de fichiers avec git.
+11:10 − Exploration de l’historique
+11:30 − Que versionner ? Qu’est ce qu’un bon commit ?
+11:50 − Gestion avancée des changements et de l’historique.
+12:10 − Récapitulatif et consolidation.
+12:30 − Pause
+
+13:30 − Travail en parallèle et notion de branche.
+13:50 − Fusion des travaux.
+14:00 − Génération et résolution de conflits.
+14:30 − Interaction avec un dépôt distants.
+15:00 − Pause
+15:15 − Collaboration et Workflows avec git.
+15:45 − Avantages et dangers de modifier l’historique.
+16:00 − Bonnes pratiques de collaboration.
+16:30 − Récapitulatif et questions ouvertes.
+17:00 − Fin
+{nolinenumbers}
+```
+
+
+<!-- ########## Intro ########## -->
+## Intervenants
+- Rémi Emonet {libyli}
+  - Maître de conférence
+      - en Informatique
+      - à l'université Jean Monnet de Saint Étienne (Université de Lyon)
+  - Chercheur
+      - en *Machine Learning* (metric learning, deep learning, transfert learning)
+      - au laboratoire Hubert Curien, Saint Étienne
+  - Implication dans <a href="https://software-carpentry.org/">*Software Carpentry*</a> <img width="280px" style="float:right" src="media/logos/software-carpentry-banner.png"/>
+      - (organisation de workshops de 2 jours)
+      - (git + bash + python/R + SQL)
+      - instructeur et contributeur
+      - membre du comité « Lesson Infrastructure »
+      - release manager
+- {no}
+- Vous !? {slide}
+  - profiles
+  - attentes
+  - *a priori*
+
+# @copy:#agenda:
+
+## Principe de la formation {libyli postits}
+- Alternances entre
+  - explications théoriques
+  - explications en pratique (démo) <sub>{demo}</sub>
+  - pratique (par vous) <sub>{action}</sub>
+- Support (beaucoup en anglais)  {dense}
+  - contenu Software Carpentry
+  - + ajouts + slides
+- Interactivité et adaptabilité  {dense}
+  - interrompre pour demander des clarifications
+  - planning approximatif ⇒ poser des questions d'ouverture
+- Post-its *    * **    **  {libyli}
+  - pendant les explications
+      - **rose/rouge** = **problème** (contenu, rythme, ...)
+  - pendant la pratique
+      - *jaune/vert* = travail *terminé*
+      - **rose/rouge** = appel **à l'aide**
+  - avant les pauses, écrire sur les post-it et les rendre 
+      - points à *conserver* et à **améliorer**
+
+## Pour mieux vous connaître {no-print libyli}
+- Qui est familier avec la gestion de versions ?
+- Qui utilise un outil de gestion de versions ?
+- Qui est à l'aise avec {libyli}
+  - la notion d'arborescence de fichiers ?
+  - la notion de ligne de commande ?
+  - le terminal ?
+  - l'interpréteur bash ?
+  - les scripts bash ?
+
+
+<!-- ########## Bash ########## -->
+## Fichiers, Ligne de commande et Bash
+- Référence : cours complet *Software Carpentry*
+  - [http://swcarpentry.github.io/shell-novice/reference/](http://swcarpentry.github.io/shell-novice/)
+- Notion de fichier texte (brut) {slide}
+  - le texte est sauvé tel quel dans le fichier
+  - parfois de la couleur est ajoutée (uniquement à la visualisation)
+  - exemples : fichiers `.txt`, `.R`, `.Rmd`, `.md`, `.py`, `.html`, …
+  - éditeurs de texte : emacs, vi, nano, **atom**, RStudio
+- Text brut ≠ Word/Libreoffice/… {slide}
+      - text riche
+      - avec style et mise en page
+      - sauvegarde de beaucoup plus que le texte (fichier binaire)
+
+## Pratique
+- Démo *{demo}*
+  - `pwd`, `ls`, `cd`, `mkdir`
+  - éditeur de texte
+  - `cp`, `mv`, `rm` (attention, pas de corbeille)
+  - `find`, `tree`
+- À vous *{action}* {slide}
+  - se connecter au cluster de calcul
+  - déterminer le chemin du dossier courant
+  - créer un dossier `formation-git`
+  - se déplacer dedans
+  - y créer/modifier un fichier `notes.md` avec quelques lignes
+  - utiliser le plus possible l'autocomplétion (touche "tab" ↹)
+
+<!-- ########## Git ########## -->
+<!-- ########## Git ########## -->
+<!-- ########## Git ########## -->
+## Gestion de version avec « Git »
+- Référence : leçon *Software Carpentry*
+  - « git-novice »
+  - [http://swcarpentry.github.io/git-novice/](http://swcarpentry.github.io/git-novice/)
+- Référence : présentation « courte » par votre formateur
+  - « git » et « gitlab »
+  - [http://home.heeere.com/research.html#twitwi/Presentation-2016-09-01-git-gitlab-hcurien](http://home.heeere.com/research.html#twitwi/Presentation-2016-09-01-git-gitlab-hcurien) {dense}
+
+<!-- ####################################### -->
+# @copy:#plan:
+
+
+<!-- ########## intro vcs ########## -->
+# @copy:#plan: %+class:inred: .vcs
+
+## Why? {*no-status image-fit bottom-left darkened}
+<div class="img" style="background-image: url(media/git/phd101212s.gif)" data-attribution="http://www.phdcomics.com/comics/archive/phd101212s.gif" data-attribution-content="@davclark (PhD comics)"></div>
+
+## Version Control: What? {libyli}
+- A version control system (VCS)
+  - records what you and your collaborators have done
+  - allows easy replication across machines
+  - allows you to easily see changes
+  - allows you to easily experiment with new things
+- Why dropbox/google drive/... is not sufficient
+  - safety of your data
+  - ownership of your data
+  - semantics of your changes
+- Why CVS/SVN (Subversion) might not be sufficient
+  - centralized nature of SVN: a single server acts as a repository
+  - working in the train/plane/countryside
+  - speed limit
+- <blockquote ><p>SVN &rarr; Git migration in progress. 8h to retrieve full SVN history, <br/>less than 1min to push full history to Git (same network)!</p></blockquote> {no densequote}
+
+## Git {libyli}
+- <blockquote><p>Git (/ɡɪt/) is a version control system (VCS) for tracking changes in computer files and coordinating work on those files among multiple people. It is primarily used for software development, but it can be used to keep track of changes in any files. <br/>As a distributed revision control system it is aimed at speed, data integrity, and support for distributed, non-linear workflows.
+Git was created by Linus Torvalds in 2005 for development of the Linux kernel, with other kernel developers contributing to its initial development…</p><cite>wikipedia</cite></blockquote>{densequote}
+- History of Git
+  - open source
+  - initiated by Linus Torvalds
+  - first release: 7 April 2005
+  - version 2.11.0 on the 29<sup>th</sup> November 2016
+  - fast and efficient
+  - most used version control system
+<!-- Good alternative: mercurial (hg)-->
+
+
+<!-- ########## git basics ########## -->
+<!-- ########## git basics ########## -->
+# @copy:#plan: %+class:inred: .git
+
+<!-- ########## setup and repo creation ########## -->
+## Setting up / Customizing Git {#introduceyourself libyli}
+- Introducing yourself (MANDATORY)
+  <pre class="smaller">git config --global user.name  "John Doe"<br/>git config --global user.email john@doe.com</pre>
+  - these are used to “sign” your changes
+  - the email is not used to send email and can be fake
+- Choose your editor <pre>git config --global core.editor "emacs"</pre>
+- The global configuration is in **~/.gitconfig**
+- Software Carpentry help about <a href="http://swcarpentry.github.io/git-novice/02-setup/">configuring git</a>
+  - http://swcarpentry.github.io/git-novice/02-setup/
+- Fancy colors and shortcuts
+  <pre class="dense">git config --global color.ui true<br/><br/>git config --global alias.st status<br/>git config --global alias.ci commit</pre>
+
+## Setting up git *{action}* *{demo}* {no-print}
+  <pre class="smaller">git config --global user.name  "John Doe"<br/>git config --global user.email john@doe.com</pre>
+  
+- To choose emacs as editor <pre>git config --global core.editor "emacs"</pre>
+- To choose nano as editor <pre>git config --global core.editor "nano -w"</pre>
+- To choose atom as editor <pre>git config --global core.editor "atom --wait" {dense}</pre>
+- Trapped in an editor?
+  - save and quit "vi" by typing `:wq` Enter
+  - save and quit "nano" with Ctrl+O Enter Ctrl+X
+  - save and quit "emacs" with Ctrl+X Ctrl+S Ctrl+X Ctrl+C
+
+## Starting with Git {libyli}
+- Initializing your repository/project (the current directory) <br/><pre>git init</pre>
+- What's up? (this does not modify anything) <br/><pre>git status</pre>
+- Deciding what is relevant <br/> <pre>git add file1 file2 …<br/>git commit</pre>
+
+@SVG: swc-media/git-staging-area.svg 800 230 {slide unpad}
+
+## Adding and changing some files *{demo}* // script "simple.txt"
+<pre>cp -r base mypaper ; cd mypaper
+
+git init
+
+git status
+git add     mypaper.tex  cvpr.sty
+git status
+git commit
+git status
+
+... and more
+</pre>
+<a target="_blank" href="git-script/simple.txt">…</a>
+- (diagram) {denser}
+
+## Creating a repository *{action}*
+- Create a folder `recipes`
+- Change the current directory (go inside `recipes`)
+- Init your repository
+- Run `ls -a`, what does it list?
+- (draw your diagram) {dense}
+
+
+<!-- ########## managing files with git ########## -->
+## Adding and changing a file *{action}*
+- Create a `salad.md` file and type a recipe in it
+- See what `git status` gives
+- Add your file and check `git status` again
+- Commit your file, and check `git status` again
+- Modify your recipe and commit your changes, … repeat
+- (draw your diagram) {dense}
+- Recap
+  - beginning
+  <pre>git init<br/>git add ...<br/>git commit [-m ...]</pre>
+  - working
+  <pre>git status<br/>git add ...<br/>git commit [-m ...]</pre>
+
+
+## Finer inspection and control over changes {libyli}
+- Keep your project clean: ignoring files
+  - **.gitignore** file(s)
+  - patterns
+      - **blabla.* ** (ignore files starting with `blabla`)
+      - **!blabla.my_precious** (but not `blabla.my_precious`)
+      - **/build/** (ignore the `build` folder)
+      - **build/** (ignore all `build` folders (at any level))
+      - ***~** (ignore files ending with `~`)
+- What did I just modify?
+  <pre>git status<br/>git diff [...]</pre>
+- What happened?
+  <pre>git log</pre>
+
+## Adding and changing a file *{action}*
+- Create a `tmp.log` file with some useless content in it
+- Create a `all.log` file with some useless content in it
+- Check `git status`
+- Create a `.gitignore` with one line containing `tmp.log`
+- Check `git status`
+- Commit the `.gitignore` file
+- Check `git status`
+  
+<!-- ########## exploring (more) the history ########## -->
+
+<!--
+## Nota Bene (vs CVS, Subversion) {libyli}
+- You have the complete repository
+  - have all commits locally
+  - commit often, fast and everywhere (train, plane, here)
+  - merge with 0-stress
+  - warning: commit ≠ backup
+- Need to “**git add**” modifications
+- Repository == project
+  - SVN has a big tree-shaped repository
+  - SVN allows to "checkout" any subtree
+  - Git works at the repository level
+  - you'll have a set of repository
+  - commits are at the repository level
+  -->
+
+
+
+<!-- ########## Git History ########## -->
+# @copy:#plan: %+class:inred: .githisto
+
+## Exploring the History {libyli}
+- Remember **git log**?
+- Each commit is written in stone
+  - parent(s) commit
+  - author
+  - modifications
+  - sha1sum (e.g.    cb6dc3cb1f4f5eb15c1d9b2b25ae741cd73c0554)
+<br/>
+- Can be diff'ed against <br/><pre>git diff cb6dc3...</pre>
+- Can be use to retreive a file <br/><pre>git checkout cb6dc3... -- thefile.ext</pre>
+- … get commit IDs, diff, checkout *{demo}*
+
+## Exploring history *{action}*
+- Find the SHA1 of a previous version (your choice)
+- Diff with an old version of your recipe
+- Recover an old version
+- Recover the latest version
+- NB: call for help in case of “detached HEAD”
+  - run `git checkout master`
+
+
+<!-- ########## what to commit and how ########## -->
+# Good Files and Good Commits <br/>*You're writing history! do it well!{denser}* {no-print}
+
+## What to commit, what not to commit?
+- Commit {libyli}
+  - the `.gitignore` file(s)
+  - any "source" file (something typed by a human)
+- Avoid committing {libyli}
+  - binary files that change often (NB: word/excel/... are binary) 
+  - generated files (that can be regenerated in a reasonable time)
+  - temporary files
+  - any file that is big
+      - see the "[git lfs](https://git-lfs.github.com/)" (large file storage) extension for that
+- Tip {slide}
+  - if you have personnal habits (or editor conventions)
+      - e.g. "files ending in `~` are temporary"
+  - use a global ignore file
+      - put the pattern in a file (outside your repository)
+      - register this file as your personnal ignore file, with
+      - <pre>git config --global core.excludesfile /pathto/yourfile</pre> {no}
+
+## What is a good commit? {libyli}
+- You're writing history! do it well!
+- Use conventional commit messages {libyli}
+  - first line is the short message (50 character)
+  - the rest is separated from the short message by an empty line
+  - be consistent on the short message format, e.g.
+      - start with a capital letter
+      - do not put a `.` at the end
+  - recommended reading <a href="http://chris.beams.io/posts/git-commit/">on commit messages</a>
+- Use meaningful commit messages, e.g. {libyli}
+  - `Changes{dense}` (bad, unspecific)
+  - `Add line "if attr is None: return False"{dense}` (bad, redundant)
+  - `Handling problem with unset attributes{dense}` (ok, ✓)
+- Using meaningful content
+  - don't make huge commits with unrelated changes
+  - split changes in as many "independent" commits as needed
+
+## Tips and Tricks (better and lost commits) {libyli}
+- Fine-grained selection of the parts to add
+  - use the interactive `git add -p yourfile.ext`
+- Fix the previous commit
+  - make the changes (corrections)
+  - use `git commit --amend`
+  - can change the message too `git commit --amend -m '.....'`
+- ok *{demo}*
+
+
+<!-- ########## Git Branches and conflicts ########## -->
+# @copy:#plan: %+class:inred: .multigit
+
+## Back to the Future: parallel universes *{demo}*
+<pre class="dense">git log
+
+git checkout 41474a33e098689b...
+
+emacs paper.tex
+git commit
+git log
+git log --graph --oneline --all --color
+
+git checkout -b mytest
+
+# Get a nice summary
+git log --graph --oneline --all --decorate
+
+# GUI
+gitk
+gitk --all
+</pre>
+
+## Branches: recap {libyli}
+- The many faces of `git checkout` 😓😞😢
+  - moving in the history <pre>git checkout sha1-or-branch-name</pre> {denser}
+  - creating a new branch at current position <pre>git checkout -b new-branch-name</pre>{denser}
+  - getting a file from the history
+    <pre>git checkout sha1-or-branch-name -- filename.ext</pre> {denser}
+- Branch
+  - a label for a commit
+  - automatically follows on new commit (**git commit**)
+  - `master` is a branch created by `git init` (by convention)
+  - `HEAD` is a reference to the last checked out revision
+- Use of “sha1” or branch-name (e.g. brrrr)
+- Shortcuts (<a href="http://stackoverflow.com/a/2222920/2297277">about ^ and ~</a>)
+  <pre class="denser">cb6dc3, brrrr, HEAD,<br/>HEAD^, HEAD~, HEAD~~, HEAD~2, HEAD~42,<br/>HEAD^2, cb6dc3^42, tagggg</pre>
+
+## Parallel universes and branches *{action}*
+- Use `git log` to find the SHA1 of a previous commit
+- Use `git diff` to compare your version with this one
+- Use `git checkout yourSha1` to get this version
+- Check that the files have changed
+- Use `git checkout -b magic` to create a new branch there
+- Make new commit(s)
+- Check the history
+- Use `git checkout master` to switch back to "master"
+- Check the history and current version <br/>`git log --graph --oneline --all --decorate`
+
+## Merging versions
+- Merging 41474a33… into the current version <pre>git merge 41474a33</pre>
+- Possible situations {slide libyli}
+  - already the same version (or 41474a33… is an ancestor)
+  - → nothing {no}
+  - the current version is an ancestor (older)
+  - → “fast-forward” merge {no}
+  - versions have diverged
+  - → full merge {no}
+      - conflicts only if the same file has been modified at the same place
+- Merging branch `brrrr` into master *{demo}* <pre>git checkout master<br/>git merge brrrr</pre>  {slide}
+  
+## Merging: recap
+- Always commit before merging
+  - commit is cheap, easy and local
+  - you never loose anything when merging // maybe your temper
+- Non-conflicting **git merge** ⇒ automatic commit
+- Conflicting **git merge**
+  - (partial merge)
+  - non-conflicting changes are automatically added
+  - you: solve conflict
+  - you: `git add`
+  - you: `git commit`
+<br/>
+- Exploring history
+  - **git log**
+  - **gitk [--all]**
+  - **git log --graph --decorate --oneline --all --color**
+
+## Different types of merge *{action}*
+- Switch to the `master` branch
+- Create a branch named `wip` (work in progress)
+- Using several commands
+  - create a situation where `master` is ahead of `wip` <br/>(`wip` is an ancestor of `master`)
+  - from master merge the content of `wip` ⇒ "Already up-to-date"
+- And 
+  - create a situation where `wip` is ahead of `master`
+  - from master merge the content of `wip` ⇒ "Fast-forward"
+- And 
+  - create a situation where `wip` and `master` diverged, such that
+      - some part of the file(s) is touched by a single branch
+      - some part of the file(s) is touched by a both branches
+  - from master merge the content of `wip` ⇒ "Conflict"
+  - solve the conflict
+
+
+
+
+<!-- ########## gitlab ########## -->
+# @copy:#plan: %+class:inred: .gitlab
+
+## What is GitLab (and GitHub)
+- GitLab
+  - a company providing support and advanced features
+  - an open source project (Community Edition)
+  - a web application
+      - collaboration platform
+      - hosting git repositories
+      - visualizing repositories
+      - managing issues/tickets
+- <blockquote><p>GitLab offers git repository management, code reviews, issue tracking, activity feeds, wikis.</p></blockquote> {no densequote}
+
+## Let's Go
+- Create a repository on GitLab
+- Push our content
+  - link our repository to the remote repository (on GitLab)
+  - push the changes to this remote repository
+- On another machine
+  - clone the repository
+  - make changes, commit and push them
+- On this machine
+  - pull changes: fetch them and then merge
+
+## Recap GitLab (and Git remotes) {libyli}
+- GitLab project == git repository (+ wiki etc)
+- The local repository can be linked to some remote one(s)
+- When we `git clone`, a remote named `origin` is set up
+- When we `git fetch`, we download the remote changes
+- ... we can then use `git merge` to integrate them
+- ... or `git pull` that does fetch+merge
+- When we `git push`, we upload our history of changes to the remote
+- Reminder: always commit before merge or pull
+
+## More GitLab (additions to git) {libyli}
+- Groups
+  - groups of users (e.g., PhD student and supervisors)
+  - automatic access to the projects of the group
+- Forking
+  - take a repository on GitLab
+  - make a “personal” copy of this repository (still on GitLab)
+- Merge requests (pull requests in GitHub)
+  - ask for another repo to integrate changes from your fork
+- Issues
+  - bug
+  - questions
+  - feature requests
+- Wikis
+  - set of pages, in markdown
+  - (also accessible as a git repository)
+
+
+
+
+
+
+
+
+<!-- ########## git workflows ########## -->
+# @copy:#plan: %+class:inred: .workflows
+
+## Git workflow: repositories and branches
+- Shared central repository (for small tight groups)
+  - one repository on gitlab
+  - all collaborators have read/write access
+  - a "master" branch, with possible additional branch
+- Set of personal "central" repositories
+  - one "fork" on gitlab for each collaborator
+  - the fork acts as the collaborator's branch
+  - merging into the "principal" repository via "merge requests" (or pull requests)
+- Fully distributed (rarely used today)
+  - repositories on collaborators machines
+  - **fetch** from one another
+
+
+## Git workflow: merging versus rebase {libyli}
+- Merging
+  - `git merge`
+  - keeps explicit information about parallel work
+  - creates ugly history with several active collaborators
+- Rebasing
+  - `git rebase`
+  - replays the diverging commits on top of latest ones
+  - creates a more linear  history
+  - warning: rewrites history
+- Recommendation
+  - start with merging
+  - when you get annoyed by the shape of the history
+  - if you're used to merge/push/pull
+  - then start using `git rebase -i origin/master`
+- *{demo}* *{action}*
+
+<!-- ########## rewritting history ########## -->
+## Advantages and dangers of <br/> changing history {libyli}
+- Advantages
+  - cleaner, more readeable history (`rebase`)
+  - possibility to correct mistakes
+      - commited generated files
+      - too many files in a commit
+      - typo in message
+- Dangers
+  - rewriting history creates a new history
+  - if the history is public (big) problem on pull/merge
+  - lost "merge" semantics
+
+<!-- ########## best collaborating practices ########## -->
+# Best Practices <br/> *collaborating with yourself and others{denser}* {no-print}
+
+## Best Practices {libyli}
+- commit early and often
+- always commit before merge (or pull)
+- reminder: use meaningful commit messages
+  - first line is the short message (50 character)
+  - recommended reading <a href="http://chris.beams.io/posts/git-commit/">on commit messages</a>
+- reminder: avoid committing
+  - binary files that change often (NB: word/excel/... are binary) 
+  - generated files (that can be regenerated in a reasonable time)
+  - temporary files
+- keep your git status clean
+- don't put git repositories inside git repositories
+- <a target="_blank" href="http://sethrobertson.github.io/GitBestPractices/">more</a>
+
+## Best Practices for <br/> Latex/Markdown/HTML/… {libyli}
+- Reviewing your changes
+  - check that it "compiles" and use git status (e.g., for missing images)
+  - use git diff (and e.g. latexdiff)
+  - use a spellchecker as you type
+- Normalizing your writing
+  - Goals
+      - easier search
+      - easier reading
+      - better versioning
+  - the “one sentence per line” rule
+      - never put more than one sentence on one line
+      - avoid as much as possible to break a sentence on multiple lines (e.g., don't reflow/justify your file)
+  - remove spaces at end of lines
+  - remove all "  " (double space, makes search difficult)
+
+<!--
+  - don't put a % alone on a line (if you need a break, probably a paragraph break is good)
+  - remove all " ~" (space tilda, typographically wrong)
+  - remove all "~ " (tilda space)
+  -->
+
+
+<!-- ######################################## -->
+# @copy:#plan: %+class:inred: .concl
+
+## Tools for Git
+- GUI 
+  - Bundled with git: `git gui` and `gitk` // maybe not anymore
+  - Many others (gitg, qgit, GitX, tortoisegit, Netbeans, ...)
+  - <a href="http://git-scm.com/downloads/guis">graphical user interfaces for Git</a>
+  - <a href="https://git.wiki.kernel.org/index.php/InterfacesFrontendsAndTools">huge list of frontends and tools</a>
+- Help for installation
+  - for Windows, use <a href="https://git-for-windows.github.io/">"gitbash"</a>
+  - details and video helper in <a href="https://swcarpentry.github.io/workshop-template/#git">the software carpentry instructions</a>
+
+## Key Points and More {deck-status-fake-end}
+- Version control
+  - keep track of what happened
+  - store semantic snapshots/versions of your “code”
+- Git
+  - “distributed” version control: you have a complete repository
+  - efficient and widely used
+  - one repository per project
+- GitLab : a place to share repositories (projects)
+  - visualization of the repositories, wiki pages, issue tracker, …
+  - groups of users (e.g., PhD student and supervisors)
+- More links
+  - <a href="http://pcottle.github.io/learnGitBranching/">interactive learning of branching in Git</a>
+  - <a href="http://git-scm.com/">official website</a>
+  - <a href="http://git-scm.com/downloads/guis">graphical user interfaces for Git</a>
+  - for <a href="http://www.youtube.com/watch?v=4XpnKHJAok8">Git by a git</a>, ask Linus Torvald
+  - <a href="http://git-scm.com/book">Pro Git book</a> (available online)
+  - <a href="https://github.com/git-tips/tips">git-tips</a>
+
+## Correspondence git &rlarr; svn {libyli}
+- git commit &rlarr; none
+- git commit ; git push &rlarr; svn commit
+- git fetch &rlarr; none
+- git fetch ; git merge &rlarr; svn update
+- git pull == git fetch ; git merge
+-  {no}
+- NB: you can also use git to collaborate with SVN users, using "git svn"
+
+## Going further {no-print}
+- git remote add
+- git remote set-url
+- git tag
+- git rebase
+- git commit --amend
+- git reflog
+- git ls-files
+- git cherry-pick
+- git revert
+- git bisect
+
+
+
+                    
+</section>
+
+
+    <p class="deck-status" data-progress-size=": spe.top(10, 585) ; bottom: slide.top" style="z-index: 0; color: #339; background: #EEE;"> <span class="deck-status-current"></span> / <span class="deck-status-total"></span> − <span class="var-author">will be replaced by the author</span> − <span class="var-title">will be replaced by the title</span></p>
+
+    <a data-progress-size=": spe.top(15, 555); height: 45*designRatio; left: slide.right - 70*designRatio; width: 70*designRatio" class="ccby" href="http://en.wikipedia.org/wiki/Creative_Commons_license" title="This work is under CC-BY licence." target="_blank"></a>
+
+    <a class="ujm" data-progress-size=": spe.top(15, 515); height: 65*designRatio; left: slide.left; width: 130*designRatio" target="_blank"></a> <!-- shown only if with-ujm is set on the container -->
+    <a class="hcurien" data-progress-size=": spe.top(15, 470); height: 105*designRatio; left: slide.right - 160*designRatio; width: 150*designRatio" target="_blank"></a> <!-- shown only if with-ujm is set on the container -->
+
+</div>
+
+
+ <div xml:base="../common/histats.html"><script type="text/javascript">var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '1,1148852,4,0,0,0,00010000']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('http://s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();
+    </script><noscript><a href="http://www.histats.com" target="_blank"><img src="http://sstatic1.histats.com/0.gif?1148852&amp;101" alt="free web tracker" border="0"></img></a></noscript><a title="Web Analytics" href="http://getclicky.com/66620997"></a><script type="text/javascript">
+var clicky_site_ids = clicky_site_ids || [];
+clicky_site_ids.push(66620997);
+(function() {
+  var s = document.createElement('script');
+  s.type = 'text/javascript';
+  s.async = true;
+  s.src = '//static.getclicky.com/js';
+  ( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild( s );
+})();
+</script><noscript>
+            <p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66620997ns.gif"></img></p>
+         </noscript>
+      </div>
+
+</body>
+</html>
